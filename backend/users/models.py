@@ -36,6 +36,8 @@ class User(AbstractUser):
 
     role = models.CharField(max_length=255, blank=True, null=True)
 
+    balance = models.IntegerField(blank=True, null=True, default=0)
+
 
     # Social Profile
     avatar = models.ImageField(upload_to=user_directory_path, blank=True, null=True)

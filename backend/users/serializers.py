@@ -21,3 +21,25 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
 
+
+class UserBalanceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'email', 'username', 'wallet_address', 'balance']
+
+
+
+class UpdateBalanceSerializer(serializers.ModelSerializer):
+
+
+    token_amount = serializers.SerializerMethodField()
+
+    def get_token_amount(self, obj):
+        return obj.balance
+
+
+    class Meta:
+        model = User
+        fields = ['email', 'username', 'wallet_address', 'token_amount']
+
