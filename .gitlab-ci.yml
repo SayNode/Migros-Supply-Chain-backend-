@@ -1,0 +1,70 @@
+stages:
+  - pull
+  - build
+  - lint
+  - push
+  - cleanup
+  - deploy
+
+before_script:
+  - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+# login in into our gitlab account
+
+pull:
+  stage: pull
+  script:
+    - docker pull "$CI_REGISTRY_IMAGE":latest
+#pullin from our latest image
+
+build:
+  stage: build
+  script:
+    - docker build --tag="$CI_PIPELINE_ID":"$CI_COMMIT_REF_NAME" --cache-from="$CI_REGISTRY_IMAGE":latest .
+# building a temporary image with new names
+
+lint:
+  stage: lint
+  allow_failure: true
+  only:
+    - master
+  script:
+    - export CI_PIPELINE_ID=$CI_PIPELINE_ID
+    - export CI_BUILD_REF_NAME=$CI_COMMIT_REF_NAME
+    - docker-compose -p "$CI_PIPELINE_ID" -f docker-compose.ci.yml run backend flake8 .
+#checking the new image as we have just name it differently, before pushing it
+push image:
+  stage: push
+  only:
+    - master
+    - tags
+  script:
+    - docker tag "$CI_PIPELINE_ID":"$CI_COMMIT_REF_NAME" "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME"
+    - docker push "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME"
+
+push latest:
+  stage: push
+  script:
+    - docker tag "$CI_PIPELINE_ID":"$CI_COMMIT_REF_NAME" "$CI_REGISTRY_IMAGE":latest
+    - docker push "$CI_REGISTRY_IMAGE":latest
+#pushing our image after all the checks
+
+cleanup:
+  stage: cleanup
+  when: always
+  script:
+    - docker rmi -f "$CI_PIPELINE_ID":"$CI_COMMIT_REF_NAME"
+    - docker-compose -p "$CI_PIPELINE_ID" -f docker-compose.ci.yml down --remove-orphans
+#clening up our image
+
+
+deploy:
+  stage: deploy
+  when: manual
+  script:
+    - docker-compose -f docker-compose.deploy.yml pull
+    - docker-compose -f docker-compose.deploy.yml down --remove-orphans
+    - docker volume rm motion-assignment-team-3_build
+    - docker-compose -f docker-compose.deploy.yml up -d
+
+
+

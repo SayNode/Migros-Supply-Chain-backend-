@@ -1,0 +1,40 @@
+version: '3'
+# declaring the version
+
+services:
+  backend:
+    # giving a name to our service
+    image: #registry.gitlab.propulsion-home.ch/full-stack/batch-19-feb-2022/motion-backend-assignment/motion-assignment-team-3:latest
+    # specifying which image
+    ports:
+      - 8000:8000
+    # opening ports which are close by default
+    volumes:
+    - ./backend:/backend
+    # copying the volume from our projects into the container
+    # this allows us to map changes in real time from our application to pur container
+    # without losing data
+    env_file:
+      - ./env/dev.env
+
+    command: 'tail -f /dev/null'
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    env_file:
+      - ./env/dev.env
+    ports:
+      - 5555:5432
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:latest
+
+
+volumes:
+  postgres_db:
+
+
