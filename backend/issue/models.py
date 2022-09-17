@@ -13,7 +13,7 @@ User = get_user_model()
 class Issue(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.PROTECT, null=True, related_name='user_report')
     category = models.ForeignKey(to=Category, on_delete=models.PROTECT, null=True)
-    product = models.ForeignKey(to=Product, on_delete=models.PROTECT, null=True)
+    product = models.ForeignKey(to=Product, on_delete=models.PROTECT, null=True, blank=True)
     message = models.TextField(max_length=255, blank=True, null=True)
     suggestions = models.TextField(max_length=255, blank=True, null=True)
     delay_estimation = models.CharField(max_length=32, blank=True, null=True)

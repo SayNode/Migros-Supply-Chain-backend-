@@ -6,7 +6,6 @@ from category.models import Category
 class Product(models.Model):
 
     product_name = models.CharField(max_length=255)
-    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
