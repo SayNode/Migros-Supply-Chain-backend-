@@ -12,7 +12,6 @@ User = get_user_model()
 
 class Issue(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.PROTECT, null=True, related_name='user_report')
-    user_role = models.CharField(max_length=32, blank=True, null=True)
     category = models.ForeignKey(to=Category, on_delete=models.PROTECT, null=True)
     product = models.ForeignKey(to=Product, on_delete=models.PROTECT, null=True)
     message = models.TextField(max_length=255, blank=True, null=True)
@@ -34,7 +33,7 @@ class Issue(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.pk}, username: {self.user.username}  wallet : {self.user.wallet_address},  GPS : {self.gps_coordinates}, STATUS :{self.status}'
+        return f'{self.pk}, USERNAME: {self.user.username}, ROLE {self.user.role}   WALLET : {self.user.wallet_address},  GPS : {self.gps_coordinates}, STATUS :{self.status}'
 
     class Meta:
         verbose_name = 'issue'

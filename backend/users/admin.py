@@ -26,5 +26,5 @@ class UserAdmin(UserAdmin):
 
     )
     # fields which are shown when looking at a list of instances
-    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    list_display = ('email', 'first_name', 'last_name', 'role', 'wallet_address', 'is_staff')
     ordering = ('email',)
